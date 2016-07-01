@@ -84,8 +84,13 @@ public class Sound implements Constants {
     }
 
     public static void setSpeakerGain(String value, Context context) {
-        Control.runCommand(value + " " + value, SPEAKER_GAIN_FILE,
-                SPEAKER_GAIN_FILE.equals(SPEAKER_GAIN) ? Control.CommandType.FAUX_GENERIC : Control.CommandType.GENERIC, context);
+        if (SPEAKER_GAIN_FILE.equals(SPEAKER_BOOST_L) || SPEAKER_GAIN_FILE.equals(SPEAKER_BOOST_R)) {
+            Control.runCommand(value, SPEAKER_BOOST_L, Control.CommandType.GENERIC, context);
+            Control.runCommand(value, SPEAKER_BOOST_R, Control.CommandType.GENERIC, context);
+        } else {
+            Control.runCommand(value + " " + value, SPEAKER_GAIN_FILE,
+                    SPEAKER_GAIN_FILE.equals(SPEAKER_GAIN) ? Control.CommandType.FAUX_GENERIC : Control.CommandType.GENERIC, context);
+        }
     }
 
     public static String getCurSpeakerGain() {
@@ -94,8 +99,9 @@ public class Sound implements Constants {
                 return Utils.readFile(SPEAKER_GAIN).split(" ")[0];
             case SPEAKER_BOOST:
                 return Utils.readFile(SPEAKER_BOOST);
+            default:
+                return Utils.readFile(SPEAKER_GAIN_FILE);
         }
-        return null;
     }
 
     public static List<String> getSpeakerGainLimits() {
