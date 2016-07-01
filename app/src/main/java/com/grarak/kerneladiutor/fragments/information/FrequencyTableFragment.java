@@ -3,6 +3,8 @@ package com.grarak.kerneladiutor.fragments.information;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -81,14 +83,22 @@ public class FrequencyTableFragment extends RecyclerViewFragment implements Cons
         CardViewItem.DCardView muptimeCard = new CardViewItem.DCardView();
         muptimeCard.setTitle("System Times:");
         muptimeCard.setDescription(
-        "Uptime: " + getDurationBreakdown(SystemClock.elapsedRealtime()) +
-        "\nAwake Time: " + getDurationBreakdown(SystemClock.uptimeMillis()) +
-        "\nDeep Sleep: " + getDurationBreakdown(SystemClock.elapsedRealtime() - SystemClock.uptimeMillis())
+                "Uptime: " + getDurationBreakdown(SystemClock.elapsedRealtime()) +
+                        "\nAwake Time: " + getDurationBreakdown(SystemClock.uptimeMillis()) +
+                        "\nDeep Sleep: " + getDurationBreakdown(SystemClock.elapsedRealtime() - SystemClock.uptimeMillis())
         );
         addView(muptimeCard);
         int wasoffline = 0;
+        StringBuilder offline_cores = new StringBuilder();
+
         for (int i = 0; i < CPU.getCoreCount(); i++) {
             if (!CPU.isCoreOnline(i)) {
+                if (!Utils.getsysfspath(CPU_TIME_IN_STATE_ARRAY, i).equals(String.format(CPU_TIME_IN_STATE_PERSISTENT, i))) {
+                    if (offline_cores.length() > 0) {
+                        offline_cores.append(",");
+                    }
+                    offline_cores.append(i);
+                }
                 wasoffline = 1;
                 CPU.activateCore(i, true, getContext());
             }
@@ -166,7 +176,20 @@ public class FrequencyTableFragment extends RecyclerViewFragment implements Cons
                 wasoffline = 0;
             }
         }
+        if (offline_cores.length() > 0) {
+            maketoast(offline_cores);
+        }
 
+    }
+
+    private void maketoast (final StringBuilder offline) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                String toastmsg = String.format(getString(offline.length() <= 1 ? R.string.inaccurate_stats_single : R.string.inaccurate_stats_multiple), offline);
+                Utils.toast(toastmsg, getContext());
+            }
+        });
     }
 
     /**

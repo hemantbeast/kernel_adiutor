@@ -111,6 +111,8 @@
     <string name="deep_sleep">Deep Sleep</string>
     <string name="reset_timer">Reset Timers</string>
     <string name="restore_timer">Restore Timers</string>
+    <string name="inaccurate_stats_single">Core: %s was offline. It\'s Stats are likely inaccurate.</string>
+    <string name="inaccurate_stats_multiple">Core(s): %s were offline. Their Stats are likely inaccurate.</string>
 
     <!-- Kernel Information -->
     <string name="kernel_version">Kernel Version</string>
