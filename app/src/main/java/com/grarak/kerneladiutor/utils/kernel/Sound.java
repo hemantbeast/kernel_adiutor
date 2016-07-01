@@ -131,11 +131,15 @@ public class Sound implements Constants {
     }
 
     public static void setCamMicrophoneGain(String value, Context context) {
-        Control.runCommand(value, CAM_MICROPHONE_GAIN, Control.CommandType.FAUX_GENERIC, context);
+        if (Utils.getsysfspath(CAM_MICROPHONE_GAIN_ARRAY).equals(CAM_MICROPHONE_GAIN)) {
+            Control.runCommand(value, CAM_MICROPHONE_GAIN, Control.CommandType.FAUX_GENERIC, context);
+        } else {
+            Control.runCommand(value, Utils.getsysfspath(CAM_MICROPHONE_GAIN_ARRAY), Control.CommandType.GENERIC, context );
+        }
     }
 
     public static String getCurCamMicrophoneGain() {
-        return Utils.readFile(CAM_MICROPHONE_GAIN);
+        return Utils.readFile(Utils.getsysfspath(CAM_MICROPHONE_GAIN_ARRAY));
     }
 
     public static List<String> getCamMicrophoneGainLimits() {
@@ -143,7 +147,7 @@ public class Sound implements Constants {
     }
 
     public static boolean hasCamMicrophoneGain() {
-        return Utils.existFile(CAM_MICROPHONE_GAIN);
+        return Utils.existFile(Utils.getsysfspath(CAM_MICROPHONE_GAIN_ARRAY));
     }
 
     public static void setHandsetMicrophoneGain(String value, Context context) {
