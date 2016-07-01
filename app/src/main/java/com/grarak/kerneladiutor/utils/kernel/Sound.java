@@ -151,11 +151,15 @@ public class Sound implements Constants {
     }
 
     public static void setHandsetMicrophoneGain(String value, Context context) {
-        Control.runCommand(value, HANDSET_MICROPONE_GAIN, Control.CommandType.FAUX_GENERIC, context);
+        if (Utils.getsysfspath(HANDSET_MICROPONE_GAIN_ARRAY).equals(HANDSET_MICROPONE_GAIN)) {
+            Control.runCommand(value, Utils.getsysfspath(HANDSET_MICROPONE_GAIN_ARRAY), Control.CommandType.GENERIC, context);
+        } else {
+            Control.runCommand(value, HANDSET_MICROPONE_GAIN, Control.CommandType.FAUX_GENERIC, context);
+        }
     }
 
     public static String getCurHandsetMicrophoneGain() {
-        return Utils.readFile(HANDSET_MICROPONE_GAIN);
+        return Utils.readFile(Utils.getsysfspath(HANDSET_MICROPONE_GAIN_ARRAY));
     }
 
     public static List<String> getHandsetMicrophoneGainLimits() {
@@ -163,7 +167,7 @@ public class Sound implements Constants {
     }
 
     public static boolean hasHandsetMicrophoneGain() {
-        return Utils.existFile(HANDSET_MICROPONE_GAIN);
+        return Utils.existFile(Utils.getsysfspath(HANDSET_MICROPONE_GAIN_ARRAY));
     }
 
     public static boolean isIndependentHeadphoneGainEnabled(Context context) {
