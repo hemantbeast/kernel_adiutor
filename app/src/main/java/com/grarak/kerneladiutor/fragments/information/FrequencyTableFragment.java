@@ -101,6 +101,12 @@ public class FrequencyTableFragment extends RecyclerViewFragment implements Cons
                 }
                 wasoffline = 1;
                 CPU.activateCore(i, true, getContext());
+                //give the cpufreq driver time to populate the sysfsnode before continuing
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
             }
             // <Freq, time>
             int total_time = 0;
